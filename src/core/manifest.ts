@@ -1,4 +1,5 @@
 import {WebGLRenderer} from 'three';
+import BaseSceneManager from './scenes/scene-manager';
 
 /**
  * Class that encapsulates the entire manifestation
@@ -7,6 +8,7 @@ import {WebGLRenderer} from 'three';
 export default class Manifest {
   public canvas: HTMLElement;
   public renderer: WebGLRenderer;
+  public sceneManager: BaseSceneManager;
 
   /**
    * @param {HTMLElement} canvas
@@ -22,7 +24,18 @@ export default class Manifest {
     renderer.setSize(canvasWidth, canvasHeight);
     renderer.setClearColor(0x000000, 1.0);
     this.renderer = renderer;
-    renderer.setAnimationLoop(() => {
+    this.sceneManager = new BaseSceneManager();
+  }
+
+  // setInitialScene(initialScene: string) {
+  //   this.sceneManager.set()
+  // }
+
+  registerScenes(): void {
+  }
+
+  start() {
+    this.renderer.setAnimationLoop(() => {
       console.log('frame');
     });
   }

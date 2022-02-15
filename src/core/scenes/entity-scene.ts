@@ -7,8 +7,10 @@ import {IEntityScene} from './interfaces';
 /**
  * An entity-component managed scene
  */
+
 // eslint-disable-next-line max-len
 export default class EntityScene extends ManagedLifeCycle implements IEntityScene {
+  public name: string;
   public scene: Scene;
   public hierarchy: Entity[];
   public cameraCollection: CameraCollection;
@@ -27,13 +29,13 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
    * Initialize the scene.
    */
   initialize(): void {
-
+    console.log('test');
   }
 
   /**
    * Dispose the scene and all of the entities within.
    */
   dispose(): void {
-
+    console.log('test');
   }
 }
