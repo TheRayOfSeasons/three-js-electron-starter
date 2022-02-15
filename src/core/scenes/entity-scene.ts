@@ -10,7 +10,6 @@ import {IEntityScene} from './interfaces';
 
 // eslint-disable-next-line max-len
 export default class EntityScene extends ManagedLifeCycle implements IEntityScene {
-  public name: string;
   public scene: Scene;
   public hierarchy: Entity[];
   public cameraCollection: CameraCollection;

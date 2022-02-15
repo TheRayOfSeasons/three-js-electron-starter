@@ -1,31 +1,56 @@
-import EntityScene from './entity-scene';
+import {EntitySceneClass} from './interfaces';
 
-export let SceneManager: BaseSceneManager;
+export default class SceneManager {
+  public static currentSceneName: string;
+  // TODO: Refactor to IEntitySceneExtender
+  public static currentScene: EntitySceneClass;
+  public static currentSceneIndex: number;
+  public static scenes: EntitySceneClass[] = [];
 
-export default class BaseSceneManager {
-  public currentSceneName: string;
-  public currentScene: EntityScene;
-  public scenes: EntityScene[];
-
-  constructor() {
-    SceneManager = this;
+  static set(initialScene: string, scenes: EntitySceneClass[]) {
+    SceneManager.currentSceneName = initialScene;
+    SceneManager.scenes = scenes;
+    SceneManager.currentScene = SceneManager.getScene(
+        SceneManager.currentSceneName,
+    );
   }
 
-  set(initialScene: string, scenes: EntityScene[]) {
-    this.currentSceneName = initialScene;
-    this.scenes = scenes;
-    this.currentScene = this.getScene(this.currentSceneName);
+  static addScene(scene: EntitySceneClass) {
+    SceneManager.scenes.push(scene);
   }
 
-  addScene(scene: EntityScene) {
-    this.scenes.push(scene);
+  static loadScene(sceneName: string): void {
+    if (SceneManager.currentScene) {
+      // TODO: dispose previous scene
+    }
+    SceneManager.currentScene = SceneManager.getScene(sceneName);
+    SceneManager.currentSceneIndex = SceneManager
+        .scenes
+        .map((scene) => scene.constructor.name)
+        .indexOf(SceneManager.currentScene.constructor.name);
   }
 
-  getScene(sceneName: string): EntityScene {
-    return this.scenes.find((scene) => scene.name === sceneName);
+  static loadSceneByIndex(index: number): void {
+    if (SceneManager.currentScene) {
+      // TODO: dispose previous scene
+    }
+    SceneManager.currentScene = SceneManager.getSceneByIndex(index);
+    SceneManager.currentSceneIndex = index;
   }
 
-  getSceneByIndex(index: number): EntityScene {
-    return this.scenes[index];
+  static getScene(sceneName: string): EntitySceneClass {
+    const scene = SceneManager.scenes.find((scene) => scene.name === sceneName);
+    if (!scene) {
+      throw new Error(`Scene "${sceneName}" not found.`);
+    }
+    return scene;
+  }
+
+  static getSceneByIndex(index: number): EntitySceneClass {
+    const scene = SceneManager.scenes[index];
+    if (!scene) {
+      throw new Error(`Scene with index "${index}" not found`);
+    }
+    return scene;
   }
 }
