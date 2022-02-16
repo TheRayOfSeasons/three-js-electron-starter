@@ -1,4 +1,4 @@
-import {Camera, WebGLRenderer} from 'three';
+import {WebGLRenderer} from 'three';
 import {EntitySceneClass} from './scenes/interfaces';
 import SceneManager from './scenes/scene-manager';
 
@@ -29,10 +29,6 @@ export default class Threenity {
     this.renderer = renderer;
   }
 
-  // setInitialScene(initialScene: string) {
-  //   this.sceneManager.set()
-  // }
-
   registerScenes(scenes: EntitySceneClass[]): void {
     SceneManager.scenes = scenes;
   }
@@ -42,8 +38,10 @@ export default class Threenity {
   }
 
   start() {
+    const scene = SceneManager.currentScene;
+    scene.setup();
     this.renderer.setAnimationLoop(() => {
-      console.log('frame');
+      scene.run();
     });
   }
 }

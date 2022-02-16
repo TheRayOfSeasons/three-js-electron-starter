@@ -13,7 +13,7 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
   public entities: Entity[];
   public cameraCollection: CameraCollection;
   public currentCameraKey: string;
-  defaultCamera: string;
+  public defaultCamera: string;
   protected renderer: WebGLRenderer;
 
   /**
@@ -25,22 +25,34 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
     this.scene = new Scene();
     this.currentCameraKey = this.defaultCamera;
     this.renderer = renderer;
+    this.entities = this.setupEntities();
+    if (this.initialize) {
+      this.initialize();
+    }
+  }
+
+  /**
+   * Setup and return all initial entities here as an array.
+   */
+  setupEntities(): Entity[] {
+    throw new Error('Method not implemented.');
   }
 
   get currentCamera(): Camera {
     return this.cameraCollection[this.currentCameraKey];
   }
 
-  /**
-   * Initialize the scene.
-   */
-  initialize(): void {
+  setup(): void {
     for (const entity of this.entities) {
       entity.awake();
       entity.start();
     }
-    console.log('test');
   }
+
+  /**
+   * Initialize the scene.
+   */
+  initialize?(): void
 
   // TODO: add postprocess function
   postprocess(renderer: WebGLRenderer, mainCamera: Camera): void {
@@ -54,10 +66,14 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
   }
 
   render(): void {
+    this.renderer.render(this.scene, this.currentCamera);
+  }
+
+  run(): void {
     for (const entity of this.entities) {
       entity.update();
     }
-    this.renderer.render(this.scene, this.currentCamera);
+    this.render();
     for (const entity of this.entities) {
       entity.lateUpdate();
     }

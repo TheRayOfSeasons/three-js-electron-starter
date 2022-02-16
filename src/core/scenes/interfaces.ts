@@ -14,6 +14,7 @@ export interface IEntityScene {
   defaultCamera: string
   cameraCollection: CameraCollection
   entities: Entity[]
-  initialize(): void
+  setupEntities(): Entity[]
+  setup(): void
   dispose(): void
 }
