@@ -49,7 +49,10 @@ export default class Component extends ManagedLifeCycle implements IComponent, I
    * Destroy the current entity.
    */
   public destroy(): void {
-    this.onDestroy();
+    this.entity.destroy();
+  }
+
+  public dispose(): void {
     // TODO: add disposal logic here
   }
 }

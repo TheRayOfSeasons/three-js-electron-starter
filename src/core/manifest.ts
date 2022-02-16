@@ -41,15 +41,6 @@ export default class Threenity {
     SceneManager.loadSceneByIndex(index);
   }
 
-  // TODO: add render function
-
-  // TODO: add postprocess function
-  postprocess(callback: (renderer: WebGLRenderer, mainCamera: Camera) => void) {
-    // TODO: create camera manager for main and all other active cameras
-    callback(this.renderer, null);
-    // TODO: Developer must be able to postprocess with any camera
-  }
-
   start() {
     this.renderer.setAnimationLoop(() => {
       console.log('frame');

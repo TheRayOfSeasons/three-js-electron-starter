@@ -13,7 +13,7 @@ export interface IEntityScene {
   scene: Scene
   defaultCamera: string
   cameraCollection: CameraCollection
-  hierarchy: Entity[]
+  entities: Entity[]
   initialize(): void
   dispose(): void
 }
