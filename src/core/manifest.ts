@@ -10,6 +10,7 @@ export default class Threenity {
   public canvas: HTMLElement;
   // TODO: Renderer class must be configurable by developer.
   public renderer: WebGLRenderer;
+  protected sceneManager: SceneManager;
 
   /**
    * @param {HTMLElement} canvas
@@ -27,19 +28,19 @@ export default class Threenity {
     renderer.setClearColor(0x000000, 1.0);
     // TODO: Add callback function for further renderer configs
     this.renderer = renderer;
+    this.sceneManager = new SceneManager();
   }
 
   registerScenes(scenes: EntitySceneClass[]): void {
-    SceneManager.scenes = scenes;
+    this.sceneManager.scenes = scenes;
   }
 
   setInitialScene(index: number): void {
-    SceneManager.loadSceneByIndex(index);
+    this.sceneManager.loadSceneByIndex(index);
   }
 
   start() {
-    const scene = SceneManager.currentScene;
-    scene.setup();
+    const scene = this.sceneManager.currentScene;
     this.renderer.setAnimationLoop(() => {
       scene.run();
     });
