@@ -1,6 +1,7 @@
 import {Camera, Scene, WebGLRenderer} from 'three';
 import {CameraCollection} from '../camera-manager/interfaces';
 import Entity from '../entities/entity';
+import {EntityClass} from '../entities/interfaces';
 import ManagedLifeCycle from '../lifecycles/lifecycle';
 import CanvasManager from '../managers/canvas-manager';
 import RenderManager from '../managers/render-manager';
@@ -17,9 +18,9 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
   public cameraCollection: CameraCollection;
   public currentCameraKey: string;
   public defaultCamera: string;
-  protected canvasManager: CanvasManager;
-  protected sceneManager: SceneManager;
-  protected renderManager: RenderManager;
+  public canvasManager: CanvasManager;
+  public sceneManager: SceneManager;
+  public renderManager: RenderManager;
 
 
   public constructor(
@@ -29,7 +30,7 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
   ) {
     super();
     this.scene = new Scene();
-    this.currentCameraKey = this.defaultCamera;
+    this.entities = [];
     this.canvasManager = canvasManager;
     this.renderManager = renderManager;
     this.sceneManager = sceneManager;
@@ -57,6 +58,13 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
   }
 
   /**
+   * Setup cameras
+   */
+  public setupCameras(): CameraCollection {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
    * Setup and return all initial entities here as an array.
    */
   public setupEntities(): Entity[] {
@@ -75,19 +83,35 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
     renderer.setClearColor(0x000000, 1.0);
   }
 
+  public setCurrentCamera(cameraKey: string): void {
+    this.currentCameraKey = cameraKey;
+  }
+
   /**
    * Sets up all components of the scene.
    */
   public setup(): void {
     this.setupRenderer(this.canvasManager.canvas, this.renderManager.renderer);
-    this.setupEntities();
+    this.cameraCollection = this.setupCameras();
+    this.currentCameraKey = this.defaultCamera;
+    this.entities = this.setupEntities();
     for (const entity of this.entities) {
       entity.awake();
+    }
+    for (const entity of this.entities) {
       entity.start();
     }
   }
 
+  public addEntity(entityClass: EntityClass): Entity {
+    const TargetEntity = entityClass;
+    const entity = new TargetEntity(this);
+    this.addToScene(entity);
+    return entity;
+  }
+
   addToScene(entity: Entity): void {
+    this.scene.add(entity.group);
     this.entities.push(entity);
   }
 

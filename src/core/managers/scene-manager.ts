@@ -1,13 +1,34 @@
 import EntityScene from '../scenes/entity-scene';
 import {EntitySceneClass} from '../scenes/interfaces';
+import CanvasManager from './canvas-manager';
+import Manager from './manager';
+import RenderManager from './render-manager';
 
 // TODO: Convert to singleton rather than a class
 // TODO: Use Dependency Injection
-export default class SceneManager {
+export default class SceneManager extends Manager {
   public currentSceneName: string;
   public currentScene: EntityScene;
   public currentSceneIndex: number;
   public scenes: EntitySceneClass[] = [];
+  protected canvasManager: CanvasManager;
+  protected renderManager: RenderManager;
+
+  public injectDependencies(
+      canvasManager: CanvasManager,
+      renderManager: RenderManager,
+  ): void {
+    this.canvasManager = canvasManager;
+    this.renderManager = renderManager;
+  }
+
+  private getManagers(): Manager[] {
+    return [
+      this.canvasManager,
+      this.renderManager,
+      this,
+    ];
+  }
 
   public addScene(scene: EntitySceneClass) {
     this.scenes.push(scene);
@@ -18,7 +39,7 @@ export default class SceneManager {
       // TODO: dispose previous scene
     }
     const SceneClass = this.getScene(sceneName);
-    const scene = new SceneClass();
+    const scene = new SceneClass(...this.getManagers());
     this.currentScene = scene;
     this.currentSceneIndex = this
         .scenes
@@ -33,7 +54,7 @@ export default class SceneManager {
       // TODO: dispose previous scene
     }
     const SceneClass = this.getSceneByIndex(index);
-    const scene = new SceneClass();
+    const scene = new SceneClass(...this.getManagers());
     this.currentScene = scene;
     this.currentSceneIndex = index;
     scene.setup();

@@ -1,16 +1,14 @@
-import {IEntity} from '../entities/interfaces';
+import Entity from '../entities/entity';
+import Component from './component';
 
-export interface IComponent {
-  entity: IEntity
-  setActive(toggle: boolean): void
+type ComponentExtender<T extends Component> = {
+  new(entity: Entity): T
 }
 
-export interface IComponentType {
-  new(entity: IEntity): IComponent
-}
+export type ComponentClass = ComponentExtender<Component>;
 
 export interface IComponentInjector {
-  getComponent(componentType: IComponentType): IComponent | null
-  addComponent(ComponentType: IComponentType): void
-  removeComponent(componentType: IComponentType): void
+  getComponent(componentType: ComponentClass): Component | null
+  addComponent(ComponentType: ComponentClass): void
+  removeComponent(componentType: ComponentClass): void
 }

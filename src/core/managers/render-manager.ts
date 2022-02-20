@@ -18,33 +18,43 @@ export default class RenderManager extends Manager {
   protected canvasManager: CanvasManager;
 
   public constructor(
-      sceneManager: SceneManager,
-      canvasManager: CanvasManager,
       rendererClass: RendererClass,
-      rendererParams: WebGLRendererParameters,
+      rendererParams: WebGLRendererParameters = null,
   ) {
     super();
-    this.sceneManager = sceneManager;
-    this.canvasManager = canvasManager;
+
     this.rendererClass = rendererClass;
     this.rendererParams = rendererParams;
   }
 
+  public injectDepedencies(
+      canvasManager: CanvasManager,
+      sceneManager: SceneManager,
+  ): void {
+    this.sceneManager = sceneManager;
+    this.canvasManager = canvasManager;
+  }
+
   public setup(): void {
     this.setupRenderer();
-    this.setupResponsiveness();
   }
 
   private setupRenderer(): void {
     const ThreeRendererClass = this.rendererClass;
+    let params = this.rendererParams;
+    if (!params) {
+      params = {
+        antialias: true,
+      };
+    }
     this.renderer = new ThreeRendererClass({
       canvas: this.canvasManager.canvas,
-      ...this.rendererParams,
+      ...params,
     });
   }
 
   private setupResponsiveness(): void {
-    window.addEventListener('resize', () => {
+    const applyResponsiveness = () => {
       const canvas = this.canvasManager.canvas;
       const width = canvas.parentElement.clientWidth;
       const height = canvas.parentElement.clientHeight;
@@ -54,10 +64,15 @@ export default class RenderManager extends Manager {
         camera.updateProjectionMatrix();
       }
       this.renderer.setSize(width, height);
+    };
+    applyResponsiveness();
+    window.addEventListener('resize', () => {
+      applyResponsiveness();
     });
   }
 
   public run(callback: XRAnimationLoopCallback): void {
+    this.setupResponsiveness();
     this.renderer.setAnimationLoop((time) => {
       callback(time);
     });

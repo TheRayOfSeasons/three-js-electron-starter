@@ -1,32 +1,38 @@
 import {Group} from 'three';
 import Component from '../component-system/component';
 import {
-  IComponent,
+  ComponentClass,
   IComponentInjector,
-  IComponentType,
 } from '../component-system/interfaces';
 import ManagedLifeCycle from '../lifecycles/lifecycle';
-import {IEntityScene} from '../scenes/interfaces';
-import {IEntity} from './interfaces';
+import EntityScene from '../scenes/entity-scene';
 
 /**
  * An entity in the scene.
  */
 // eslint-disable-next-line max-len
-export default class Entity extends ManagedLifeCycle implements IEntity, IComponentInjector {
+export default class Entity extends ManagedLifeCycle implements IComponentInjector {
   public name: string;
   public group: Group;
-  public components: Component[];
-  protected entityScene: IEntityScene;
+  public components: Component[] = [];
+  public entityScene: EntityScene;
 
   /**
    * Creates an instance of Entity.
-   * @param {IEntityScene} entityScene
+   * @param {EntityScene} entityScene
    */
-  constructor(entityScene: IEntityScene) {
+  constructor(entityScene: EntityScene) {
     super();
     this.group = new Group();
     this.entityScene = entityScene;
+    this.setupComponents();
+  }
+
+  /**
+   * A function for setting up the entity instance's components.
+   */
+  setupComponents(): void {
+    throw new Error('Method not implemented.');
   }
 
   static instantiate<T extends Entity>(
@@ -42,7 +48,7 @@ export default class Entity extends ManagedLifeCycle implements IEntity, ICompon
    * @param {IComponentType} componentType
    * @return {IComponent}
    */
-  public getComponent(componentType: IComponentType): IComponent | null {
+  public getComponent(componentType: ComponentClass): Component | null {
     return this
         .components
         .find((component) => component instanceof componentType);
@@ -52,7 +58,7 @@ export default class Entity extends ManagedLifeCycle implements IEntity, ICompon
    * Adds a component to the entity.
    * @param {IComponentType} ComponentType
    */
-  public addComponent(ComponentType: IComponentType): void {
+  public addComponent(ComponentType: ComponentClass): void {
     const component = new ComponentType(this);
     this.components.push(component);
   }
@@ -61,7 +67,7 @@ export default class Entity extends ManagedLifeCycle implements IEntity, ICompon
    * Adds a component to the entity.
    * @param {IComponentType} componentType
    */
-  public removeComponent(componentType: IComponentType): void {
+  public removeComponent(componentType: ComponentClass): void {
     this.components = this
         .components
         .filter((component) => !(component instanceof componentType));
@@ -69,31 +75,41 @@ export default class Entity extends ManagedLifeCycle implements IEntity, ICompon
 
   public awake(): void {
     for (const component of this.components) {
-      component.awake();
+      if (component.awake) {
+        component.awake();
+      }
     }
   }
 
   public start(): void {
     for (const component of this.components) {
-      component.start();
+      if (component.start) {
+        component.start();
+      }
     }
   }
 
   public update(): void {
     for (const component of this.components) {
-      component.update();
+      if (component.update) {
+        component.update();
+      }
     }
   }
 
   public lateUpdate(): void {
     for (const component of this.components) {
-      component.lateUpdate();
+      if (component.lateUpdate) {
+        component.lateUpdate();
+      }
     }
   }
 
   public onDestroy(): void {
     for (const component of this.components) {
-      component.onDestroy();
+      if (component.onDestroy) {
+        component.onDestroy();
+      }
     }
   }
 

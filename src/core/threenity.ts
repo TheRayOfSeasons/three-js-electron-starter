@@ -8,8 +8,8 @@ import RenderManager from './managers/render-manager';
 
 type ThreenityParameters = {
   canvas: HTMLElement,
-  rendererClass: RendererClass,
-  rendererParams: WebGLRendererParameters
+  rendererClass?: RendererClass,
+  rendererParams?: WebGLRendererParameters
 }
 
 /**
@@ -23,17 +23,24 @@ export default class Threenity {
   protected renderManager: RenderManager;
 
   public constructor(args: ThreenityParameters) {
-    this.sceneManager = new SceneManager();
     this.canvasManager = new CanvasManager(args.canvas);
+    this.sceneManager = new SceneManager();
     if (!args.rendererClass) {
       args.rendererClass = WebGLRenderer;
     }
     this.renderManager = new RenderManager(
-        this.sceneManager,
-        this.canvasManager,
         args.rendererClass,
         args.rendererParams,
     );
+    this.sceneManager.injectDependencies(
+        this.canvasManager,
+        this.renderManager,
+    );
+    this.renderManager.injectDepedencies(
+        this.canvasManager,
+        this.sceneManager,
+    );
+    this.renderManager.setup();
   }
 
   registerScenes(scenes: EntitySceneClass[]): void {
@@ -45,7 +52,12 @@ export default class Threenity {
   }
 
   start() {
-    const scene = this.sceneManager.currentScene;
-    scene.run();
+    let scene = this.sceneManager.currentScene;
+    if (!scene) {
+      scene = this.sceneManager.loadSceneByIndex(0);
+    }
+    this.renderManager.run(() => {
+      scene.run();
+    });
   }
 }

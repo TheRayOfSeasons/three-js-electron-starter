@@ -1,32 +1,32 @@
 import Entity from '../entities/entity';
 import ManagedLifeCycle from '../lifecycles/lifecycle';
-import {IComponent, IComponentInjector, IComponentType} from './interfaces';
+import {ComponentClass, IComponentInjector} from './interfaces';
 
 /**
  * A component containing logic that can be attached to an Entity.
  */
 // eslint-disable-next-line max-len
-export default class Component extends ManagedLifeCycle implements IComponent, IComponentInjector {
-  entity: Entity;
+export default class Component extends ManagedLifeCycle implements IComponentInjector {
+  public entity: Entity;
 
   /**
    * @param {Entity} entity The entity the component will be attached to.
    */
-  constructor(entity: Entity) {
+  public constructor(entity: Entity) {
     super();
     this.entity = entity;
     if (this.awake) this.awake();
   }
 
-  getComponent(componentType: IComponentType): IComponent {
+  getComponent(componentType: ComponentClass): Component {
     return this.entity.getComponent(componentType);
   }
 
-  addComponent(ComponentType: IComponentType): void {
+  addComponent(ComponentType: ComponentClass): void {
     this.entity.addComponent(ComponentType);
   }
 
-  removeComponent(componentType: IComponentType): void {
+  removeComponent(componentType: ComponentClass): void {
     this.entity.removeComponent(componentType);
   }
 
