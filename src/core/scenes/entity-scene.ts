@@ -2,6 +2,9 @@ import {Camera, Scene, WebGLRenderer} from 'three';
 import {CameraCollection} from '../camera-manager/interfaces';
 import Entity from '../entities/entity';
 import ManagedLifeCycle from '../lifecycles/lifecycle';
+import CanvasManager from '../managers/canvas-manager';
+import RenderManager from '../managers/render-manager';
+import SceneManager from '../managers/scene-manager';
 import {IEntityScene} from './interfaces';
 
 /**
@@ -14,38 +17,28 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
   public cameraCollection: CameraCollection;
   public currentCameraKey: string;
   public defaultCamera: string;
-  protected renderer: WebGLRenderer;
+  protected canvasManager: CanvasManager;
+  protected sceneManager: SceneManager;
+  protected renderManager: RenderManager;
 
-  /**
-   * Creates an entity-component managed scene.
-   * @param {WebGLRenderer} renderer
-   */
-  constructor(renderer: WebGLRenderer) {
+
+  public constructor(
+      canvasManager: CanvasManager,
+      renderManager: RenderManager,
+      sceneManager: SceneManager,
+  ) {
     super();
     this.scene = new Scene();
     this.currentCameraKey = this.defaultCamera;
-    this.renderer = renderer;
+    this.canvasManager = canvasManager;
+    this.renderManager = renderManager;
+    this.sceneManager = sceneManager;
     this.entities = this.setupEntities();
     if (this.initialize) {
       this.initialize();
     }
-  }
-
-  /**
-   * Setup and return all initial entities here as an array.
-   */
-  setupEntities(): Entity[] {
-    throw new Error('Method not implemented.');
-  }
-
-  get currentCamera(): Camera {
-    return this.cameraCollection[this.currentCameraKey];
-  }
-
-  setup(): void {
-    for (const entity of this.entities) {
-      entity.awake();
-      entity.start();
+    if (this.configurePostprocessing) {
+      this.configurePostprocessing();
     }
   }
 
@@ -54,19 +47,55 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
    */
   initialize?(): void
 
-  // TODO: add postprocess function
-  postprocess(renderer: WebGLRenderer, mainCamera: Camera): void {
-    // TODO: create camera manager for main and all other active cameras
-    // callback(this.renderer, null);
-    // TODO: Developer must be able to postprocess with any camera
+  /**
+   * Configure any postprocessing composers and passes.
+   */
+  configurePostprocessing?(): void
+
+  get currentCamera(): Camera {
+    return this.cameraCollection[this.currentCameraKey];
+  }
+
+  /**
+   * Setup and return all initial entities here as an array.
+   */
+  public setupEntities(): Entity[] {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * Setup renderer configurations. Override for more custom setup.
+   * @param {HTMLElement} canvas The current HTML Canvas
+   * @param {WebGLRenderer} renderer The current renderer
+   */
+  public setupRenderer(canvas: HTMLElement, renderer: WebGLRenderer) {
+    const canvasHeight = canvas.parentElement.clientHeight;
+    const canvasWidth = canvas.parentElement.clientWidth;
+    renderer.setSize(canvasWidth, canvasHeight);
+    renderer.setClearColor(0x000000, 1.0);
+  }
+
+  /**
+   * Sets up all components of the scene.
+   */
+  public setup(): void {
+    this.setupRenderer(this.canvasManager.canvas, this.renderManager.renderer);
+    this.setupEntities();
+    for (const entity of this.entities) {
+      entity.awake();
+      entity.start();
+    }
   }
 
   addToScene(entity: Entity): void {
     this.entities.push(entity);
   }
 
+  /**
+   * An overridable function that renders the scene.
+   */
   render(): void {
-    this.renderer.render(this.scene, this.currentCamera);
+    this.renderManager.renderer.render(this.scene, this.currentCamera);
   }
 
   run(): void {
