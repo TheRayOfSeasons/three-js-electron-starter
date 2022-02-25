@@ -12,3 +12,18 @@ export interface IComponentInjector {
   addComponent(ComponentType: ComponentClass): void
   removeComponent(componentType: ComponentClass): void
 }
+
+export type CoroutineEnumerator = Generator<unknown, unknown, unknown>;
+
+export interface Coroutine {
+  enumerator: CoroutineEnumerator
+  isActive: boolean
+}
+
+export interface ICoroutineHandler {
+  coroutines: Coroutine[]
+  startCoroutine(coroutine: CoroutineEnumerator): void
+  pauseCoroutine(index: number): void
+  runCoroutines(): void
+  stopCoroutine(index: number): void
+}

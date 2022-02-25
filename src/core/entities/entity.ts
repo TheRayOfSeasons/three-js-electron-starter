@@ -4,6 +4,7 @@ import {
   ComponentClass,
   IComponentInjector,
 } from '../component-system/interfaces';
+import MonoBehaviour from '../component-system/monobehaviour';
 import {ManagedLifeCycle} from '../lifecycles/lifecycle';
 import EntityScene from '../scenes/entity-scene';
 
@@ -91,6 +92,9 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
     for (const component of this.components) {
       if (component.update) {
         component.update();
+      }
+      if (component instanceof MonoBehaviour) {
+        component.runCoroutines();
       }
     }
   }
