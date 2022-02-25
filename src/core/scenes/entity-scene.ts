@@ -2,7 +2,6 @@ import {Camera, Scene, WebGLRenderer} from 'three';
 import {CameraCollection} from '../camera-manager/interfaces';
 import Entity from '../entities/entity';
 import {EntityClass} from '../entities/interfaces';
-import ManagedLifeCycle from '../lifecycles/lifecycle';
 import CanvasManager from '../managers/canvas-manager';
 import RenderManager from '../managers/render-manager';
 import SceneManager from '../managers/scene-manager';
@@ -12,7 +11,7 @@ import {IEntityScene} from './interfaces';
  * An entity-component managed scene
  */
 // eslint-disable-next-line max-len
-export default class EntityScene extends ManagedLifeCycle implements IEntityScene {
+export default class EntityScene implements IEntityScene {
   public scene: Scene;
   public entities: Entity[];
   public cameraCollection: CameraCollection;
@@ -28,7 +27,6 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
       renderManager: RenderManager,
       sceneManager: SceneManager,
   ) {
-    super();
     this.scene = new Scene();
     this.entities = [];
     this.canvasManager = canvasManager;
@@ -111,7 +109,7 @@ export default class EntityScene extends ManagedLifeCycle implements IEntityScen
   }
 
   addToScene(entity: Entity): void {
-    this.scene.add(entity.group);
+    this.scene.add(entity);
     this.entities.push(entity);
   }
 

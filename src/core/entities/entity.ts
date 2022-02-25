@@ -1,19 +1,18 @@
-import {Group} from 'three';
+import {Object3D} from 'three';
 import Component from '../component-system/component';
 import {
   ComponentClass,
   IComponentInjector,
 } from '../component-system/interfaces';
-import ManagedLifeCycle from '../lifecycles/lifecycle';
+import {ManagedLifeCycle} from '../lifecycles/lifecycle';
 import EntityScene from '../scenes/entity-scene';
 
 /**
  * An entity in the scene.
  */
 // eslint-disable-next-line max-len
-export default class Entity extends ManagedLifeCycle implements IComponentInjector {
+export default class Entity extends Object3D implements ManagedLifeCycle, IComponentInjector {
   public name: string;
-  public group: Group;
   public components: Component[] = [];
   public entityScene: EntityScene;
 
@@ -23,7 +22,6 @@ export default class Entity extends ManagedLifeCycle implements IComponentInject
    */
   constructor(entityScene: EntityScene) {
     super();
-    this.group = new Group();
     this.entityScene = entityScene;
     this.setupComponents();
   }

@@ -1,27 +1,27 @@
-export default class ManagedLifeCycle {
+export interface ManagedLifeCycle {
   /**
    * Runs on the first time a component is loaded into the scene
    * and when the Entity the component is attached is initialized.
    */
-  public awake?(): void;
+  awake?(): void;
 
   /**
     * Runs once only and before update.
     */
-  public start?(): void;
+  start?(): void;
 
   /**
     * Runs once every frame.
     */
-  public update?(): void;
+  update?(): void;
 
   /**
     * Runs once every frame after the scene is rendered in the canvas.
     */
-  public lateUpdate?(): void;
+  lateUpdate?(): void;
 
   /**
     * Runs before the entity is completely disposed.
     */
-  public onDestroy?(): void;
+  onDestroy?(): void;
 }

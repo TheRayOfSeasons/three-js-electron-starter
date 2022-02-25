@@ -12,7 +12,7 @@ export default class PlaceHolderMesh extends MonoBehaviour {
     const geometry = new BoxBufferGeometry(1, 1, 1);
     const material = new MeshNormalMaterial();
     this.mesh = new Mesh(geometry, material);
-    this.entity.group.add(this.mesh);
+    this.entity.add(this.mesh);
     // TODO: Time manager
     this.clock = new Clock();
   }
