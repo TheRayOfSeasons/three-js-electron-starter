@@ -1,4 +1,5 @@
 import Entity from '../entities/entity';
+import WaitForSeconds from '../time/wait-for-seconds';
 import Component from './component';
 
 type ComponentExtender<T extends Component> = {
@@ -13,11 +14,13 @@ export interface IComponentInjector {
   removeComponent(componentType: ComponentClass): void
 }
 
-export type CoroutineEnumerator = Generator<unknown, unknown, unknown>;
+export type CoroutineEnumerator =
+  Generator<unknown, unknown, WaitForSeconds | null>;
 
 export interface Coroutine {
   enumerator: CoroutineEnumerator
-  isActive: boolean
+  isActive: boolean,
+  delay?: WaitForSeconds
 }
 
 export interface ICoroutineHandler {

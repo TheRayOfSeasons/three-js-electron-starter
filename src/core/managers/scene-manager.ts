@@ -4,8 +4,6 @@ import CanvasManager from './canvas-manager';
 import Manager from './manager';
 import RenderManager from './render-manager';
 
-// TODO: Convert to singleton rather than a class
-// TODO: Use Dependency Injection
 export default class SceneManager extends Manager {
   public currentSceneName: string;
   public currentScene: EntityScene;

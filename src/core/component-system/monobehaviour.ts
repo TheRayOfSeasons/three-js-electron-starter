@@ -1,3 +1,4 @@
+import WaitForSeconds from '../time/wait-for-seconds';
 import Behaviour from './behaviour';
 import {
   Coroutine,
@@ -40,13 +41,23 @@ export default class MonoBehaviour extends Behaviour implements ICoroutineHandle
       return;
     }
     for (let i = 0; i < this.coroutines.length; i++) {
-      const {enumerator, isActive} = this.coroutines[i];
+      const {enumerator, isActive, delay} = this.coroutines[i];
+      if (delay) {
+        if (delay.countdown > 0) {
+          delay.tick();
+          continue;
+        }
+      }
       if (!isActive) {
         continue;
       }
       const result = enumerator.next();
       if (result.done) {
         this.stopCoroutine(i);
+      } else {
+        if (result.value instanceof WaitForSeconds) {
+          this.coroutines[i].delay = result.value;
+        }
       }
     }
   }

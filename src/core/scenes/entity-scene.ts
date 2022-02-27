@@ -7,6 +7,8 @@ import RenderManager from '../managers/render-manager';
 import SceneManager from '../managers/scene-manager';
 import {IEntityScene} from './interfaces';
 
+// TODO: extend scene
+
 /**
  * An entity-component managed scene
  */
