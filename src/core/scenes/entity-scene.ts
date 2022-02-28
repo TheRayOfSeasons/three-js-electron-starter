@@ -7,14 +7,11 @@ import RenderManager from '../managers/render-manager';
 import SceneManager from '../managers/scene-manager';
 import {IEntityScene} from './interfaces';
 
-// TODO: extend scene
-
 /**
  * An entity-component managed scene
  */
 // eslint-disable-next-line max-len
-export default class EntityScene implements IEntityScene {
-  public scene: Scene;
+export default class EntityScene extends Scene implements IEntityScene {
   public entities: Entity[];
   public cameraCollection: CameraCollection;
   public currentCameraKey: string;
@@ -29,7 +26,7 @@ export default class EntityScene implements IEntityScene {
       renderManager: RenderManager,
       sceneManager: SceneManager,
   ) {
-    this.scene = new Scene();
+    super();
     this.entities = [];
     this.canvasManager = canvasManager;
     this.renderManager = renderManager;
@@ -111,7 +108,7 @@ export default class EntityScene implements IEntityScene {
   }
 
   addToScene(entity: Entity): void {
-    this.scene.add(entity);
+    this.add(entity);
     this.entities.push(entity);
   }
 
@@ -119,7 +116,7 @@ export default class EntityScene implements IEntityScene {
    * An overridable function that renders the scene.
    */
   render(): void {
-    this.renderManager.renderer.render(this.scene, this.currentCamera);
+    this.renderManager.renderer.render(this, this.currentCamera);
   }
 
   run(): void {

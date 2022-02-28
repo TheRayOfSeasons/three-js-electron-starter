@@ -15,7 +15,6 @@ type EntitySceneClassExtender<T extends EntityScene> = {
 export type EntitySceneClass = EntitySceneClassExtender<EntityScene>;
 
 export interface IEntityScene {
-  scene: Scene
   defaultCamera: string
   cameraCollection: CameraCollection
   entities: Entity[]
