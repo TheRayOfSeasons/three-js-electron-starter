@@ -27,8 +27,8 @@ export default class Component implements ManagedLifeCycle, IComponentInjector {
     return this.entity.getComponent(componentType);
   }
 
-  addComponent(ComponentType: ComponentClass): void {
-    this.entity.addComponent(ComponentType);
+  addComponent(ComponentType: ComponentClass): Component {
+    return this.entity.addComponent(ComponentType);
   }
 
   removeComponent(componentType: ComponentClass): void {

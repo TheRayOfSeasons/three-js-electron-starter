@@ -55,11 +55,13 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
 
   /**
    * Adds a component to the entity.
-   * @param {IComponentType} ComponentType
+   * @param {ComponentClass} ComponentType
+   * @return {Component}
    */
-  public addComponent(ComponentType: ComponentClass): void {
+  public addComponent(ComponentType: ComponentClass): Component {
     const component = new ComponentType(this);
     this.components.push(component);
+    return component;
   }
 
   /**

@@ -10,7 +10,7 @@ export type ComponentClass = ComponentExtender<Component>;
 
 export interface IComponentInjector {
   getComponent(componentType: ComponentClass): Component | null
-  addComponent(ComponentType: ComponentClass): void
+  addComponent(ComponentType: ComponentClass): Component
   removeComponent(componentType: ComponentClass): void
 }
 
