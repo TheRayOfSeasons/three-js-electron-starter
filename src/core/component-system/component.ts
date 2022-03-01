@@ -56,8 +56,4 @@ export default class Component implements ManagedLifeCycle, IComponentInjector {
   public destroy(): void {
     this.entity.destroy();
   }
-
-  public dispose(): void {
-    // TODO: add disposal logic here
-  }
 }
