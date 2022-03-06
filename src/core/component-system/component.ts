@@ -6,7 +6,6 @@ import {ComponentClass, IComponentInjector} from './interfaces';
 /**
  * A component containing logic that can be attached to an Entity.
  */
-// eslint-disable-next-line max-len
 export default class Component implements ManagedLifeCycle, IComponentInjector {
   public entity: Entity;
   public isStarted = false;

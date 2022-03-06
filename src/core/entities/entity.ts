@@ -24,6 +24,7 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
   public name: string;
   public components: Component[] = [];
   public entityScene: EntityScene;
+  public tag: string;
   protected disposableMeshes = [Mesh, Points, Line];
 
   /**
@@ -56,6 +57,14 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
     return this
         .components
         .find((component) => component instanceof componentType);
+  }
+
+  public findEntitiesWithTag(tag: string): Entity[] {
+    return this.entityScene.entities.filter((entity) => entity.tag === tag);
+  }
+
+  public findEntityWithTag(tag: string): Entity {
+    return this.entityScene.entities.find((entity) => entity.tag === tag);
   }
 
   /**

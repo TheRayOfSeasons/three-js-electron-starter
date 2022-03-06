@@ -9,7 +9,6 @@ import {IEntityScene} from './interfaces';
 /**
  * An entity-component managed scene
  */
-// eslint-disable-next-line max-len
 export default class EntityScene extends Scene implements IEntityScene {
   public entities: Entity[];
   public canvasManager: CanvasManager;
