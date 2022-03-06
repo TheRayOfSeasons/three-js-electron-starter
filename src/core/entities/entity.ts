@@ -5,6 +5,7 @@ import {
   Line,
   Texture,
 } from 'three';
+import Behaviour from '../component-system/behaviour';
 import Component from '../component-system/component';
 import {
   ComponentClass,
@@ -78,8 +79,55 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
         .filter((component) => !(component instanceof componentType));
   }
 
+  private canComponentRun(component: Component): boolean {
+    if (component instanceof Behaviour) {
+      return component.enabled;
+    }
+    return true;
+  }
+
+  /**
+   * Returns if the current entity is active.
+   */
+  public get activeSelf() {
+    return this.visible;
+  }
+
+  /**
+   * Sets the current entity as active
+   * @param {boolean} toggle
+   */
+  public setActive(toggle: boolean): void {
+    this.visible = toggle;
+    if (toggle) {
+      for (const component of this.components) {
+        console.log(component);
+        console.log('isbehavrior:', component instanceof Behaviour);
+        if (component instanceof Behaviour) {
+          component.enable(toggle);
+        } else {
+          if (component.awake) {
+            component.awake();
+          }
+          if (!component.isStarted) {
+            component.isStarted = true;
+            if (component.start) {
+              component.start();
+            }
+          }
+        }
+      }
+    }
+  }
+
   public awake(): void {
+    if (!this.activeSelf) {
+      return;
+    }
     for (const component of this.components) {
+      if (!this.canComponentRun(component)) {
+        continue;
+      }
       if (component.awake) {
         component.awake();
       }
@@ -87,15 +135,28 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
   }
 
   public start(): void {
+    if (!this.activeSelf) {
+      return;
+    }
     for (const component of this.components) {
+      if (!this.canComponentRun(component)) {
+        continue;
+      }
       if (component.start) {
         component.start();
+        component.isStarted = true;
       }
     }
   }
 
   public update(): void {
+    if (!this.activeSelf) {
+      return;
+    }
     for (const component of this.components) {
+      if (!this.canComponentRun(component)) {
+        continue;
+      }
       if (component.update) {
         component.update();
       }
@@ -106,6 +167,9 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
   }
 
   public lateUpdate(): void {
+    if (!this.activeSelf) {
+      return;
+    }
     for (const component of this.components) {
       if (component.lateUpdate) {
         component.lateUpdate();
@@ -114,6 +178,7 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
   }
 
   public onDestroy(): void {
+    // NOTE: On destroy can run regardless if the entity is active or not.
     for (const component of this.components) {
       if (component.onDestroy) {
         component.onDestroy();

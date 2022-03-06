@@ -9,6 +9,7 @@ import {ComponentClass, IComponentInjector} from './interfaces';
 // eslint-disable-next-line max-len
 export default class Component implements ManagedLifeCycle, IComponentInjector {
   public entity: Entity;
+  public isStarted = false;
 
   /**
    * @param {Entity} entity The entity the component will be attached to.
@@ -42,21 +43,6 @@ export default class Component implements ManagedLifeCycle, IComponentInjector {
 
   setAsMainCamera(camera: Camera): void {
     this.entity.entityScene.setAsMainCamera(camera);
-  }
-
-  /**
-   * Returns if the current entity is active.
-   */
-  public get activeSelf() {
-    return this.entity.visible;
-  }
-
-  /**
-   * Sets the current entity as active
-   * @param {boolean} toggle
-   */
-  public setActive(toggle: boolean): void {
-    this.entity.visible = toggle;
   }
 
   /**

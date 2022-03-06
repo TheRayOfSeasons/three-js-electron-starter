@@ -4,7 +4,7 @@ import Component from './component';
  * A component that can be enabled and disabled.
  */
 export default class Behaviour extends Component {
-  protected _enabled: boolean;
+  protected _enabled = true;
 
   /**
    * Returns the value if the behaviour is enabled.
@@ -20,10 +20,22 @@ export default class Behaviour extends Component {
   public enable(toggle: boolean): void {
     this._enabled = toggle;
     if (toggle) {
-      this.awake();
-      this.onEnable();
+      if (this.awake) {
+        this.awake();
+      }
+      if (!this.isStarted) {
+        this.isStarted = true;
+        if (this.start) {
+          this.start();
+        }
+      }
+      if (this.onEnable) {
+        this.onEnable();
+      }
     } else {
-      this.onDisable();
+      if (this.onDisable) {
+        this.onDisable();
+      }
     }
   }
 

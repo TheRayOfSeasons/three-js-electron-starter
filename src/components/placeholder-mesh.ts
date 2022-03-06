@@ -7,8 +7,6 @@ export default class PlaceHolderMesh extends MonoBehaviour {
   public mesh: Mesh;
   public speed = 0.1;
   public value = 0;
-  // TODO: Fix issue where OrbitControls can't be used in electron apps
-  // public controls: OrbitControls;
 
   * test() {
     for (let i = 0; i < 10; i++) {
@@ -23,12 +21,15 @@ export default class PlaceHolderMesh extends MonoBehaviour {
     this.mesh = new Mesh(geometry, material);
     this.entity.add(this.mesh);
     this.startCoroutine(this.test());
+    console.log('start');
   }
 
   update() {
     if (this.value < 9) {
       console.log(this.value);
     }
-    this.mesh.rotation.y += Time.deltaTime * 0.5;
+    if (this.mesh) {
+      this.mesh.rotation.y += Time.deltaTime * 0.5;
+    }
   }
 }

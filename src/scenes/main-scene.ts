@@ -7,6 +7,10 @@ export default class MainScene extends EntityScene {
   public setupEntities(): Entity[] {
     const cube = this.addEntity(Cube);
     const mainCamera = this.addEntity(MainCamera);
+    cube.setActive(false);
+    setTimeout(() => {
+      cube.setActive(true);
+    }, 3000);
     return [
       cube,
       mainCamera,
