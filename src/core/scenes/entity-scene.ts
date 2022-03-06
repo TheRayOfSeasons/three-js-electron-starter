@@ -136,5 +136,6 @@ export default class EntityScene extends Scene implements IEntityScene {
     for (const entity of this.entities) {
       entity.destroy();
     }
+    this.entities = [];
   }
 }

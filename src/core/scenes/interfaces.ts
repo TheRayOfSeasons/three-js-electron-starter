@@ -39,3 +39,7 @@ export type RenderProcess = (
   scene: Scene,
   camera: Camera
 ) => void;
+
+export interface IEntitySceneNames {
+  [key: string]: number
+}

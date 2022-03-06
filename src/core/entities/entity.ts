@@ -3,6 +3,7 @@ import {
   Mesh,
   Points,
   Line,
+  Texture,
 } from 'three';
 import Component from '../component-system/component';
 import {
@@ -21,7 +22,7 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
   public name: string;
   public components: Component[] = [];
   public entityScene: EntityScene;
-  protected disposables = [Mesh, Points, Line];
+  protected disposableMeshes = [Mesh, Points, Line];
 
   /**
    * Creates an instance of Entity.
@@ -126,11 +127,14 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
   public destroy(): void {
     this.onDestroy();
     this.traverse((object: Object3D) => {
-      for (const disposable of this.disposables) {
-        if (object instanceof disposable) {
+      for (const disposableMeshes of this.disposableMeshes) {
+        if (object instanceof disposableMeshes) {
           object.geometry.dispose();
           object.material.dispose();
           break;
+        }
+        if (object instanceof Texture) {
+          object.dispose();
         }
       }
       this.entityScene.remove(this);
