@@ -4,7 +4,6 @@ import {
   WebGLRenderer,
 } from 'three';
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer';
-import {CameraCollection} from '../camera-manager/interfaces';
 import Entity from '../entities/entity';
 import EntityScene from './entity-scene';
 
@@ -15,8 +14,6 @@ type EntitySceneClassExtender<T extends EntityScene> = {
 export type EntitySceneClass = EntitySceneClassExtender<EntityScene>;
 
 export interface IEntityScene {
-  defaultCamera: string
-  cameraCollection: CameraCollection
   entities: Entity[]
   setupEntities(): Entity[]
   setup(): void

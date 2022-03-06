@@ -1,5 +1,4 @@
 import {Camera, Scene, WebGLRenderer} from 'three';
-import {CameraCollection} from '../camera-manager/interfaces';
 import Entity from '../entities/entity';
 import {EntityClass} from '../entities/interfaces';
 import CanvasManager from '../managers/canvas-manager';
@@ -13,13 +12,10 @@ import {IEntityScene} from './interfaces';
 // eslint-disable-next-line max-len
 export default class EntityScene extends Scene implements IEntityScene {
   public entities: Entity[];
-  public cameraCollection: CameraCollection;
-  public currentCameraKey: string;
-  public defaultCamera: string;
   public canvasManager: CanvasManager;
   public sceneManager: SceneManager;
   public renderManager: RenderManager;
-
+  private _currentCamera: Camera;
 
   public constructor(
       canvasManager: CanvasManager,
@@ -40,6 +36,14 @@ export default class EntityScene extends Scene implements IEntityScene {
     }
   }
 
+  get managers() {
+    return {
+      canvasManager: this.canvasManager,
+      renderManager: this.renderManager,
+      sceneManager: this.sceneManager,
+    };
+  }
+
   /**
    * Initialize the scene.
    */
@@ -51,14 +55,20 @@ export default class EntityScene extends Scene implements IEntityScene {
   configurePostprocessing?(): void
 
   get currentCamera(): Camera {
-    return this.cameraCollection[this.currentCameraKey];
+    if (!this._currentCamera) {
+      throw new Error(
+          'Camera is not defined. Please create a ' +
+          'monobehaviour with a camera then assign ' +
+          'it as the main camera through the ' +
+          '`this.setAsMainCamera` function at least.' +
+          'before the `update` function is called.',
+      );
+    }
+    return this._currentCamera;
   }
 
-  /**
-   * Setup cameras
-   */
-  public setupCameras(): CameraCollection {
-    throw new Error('Method not implemented.');
+  public setAsMainCamera(camera: Camera): void {
+    this._currentCamera = camera;
   }
 
   /**
@@ -80,17 +90,11 @@ export default class EntityScene extends Scene implements IEntityScene {
     renderer.setClearColor(0x000000, 1.0);
   }
 
-  public setCurrentCamera(cameraKey: string): void {
-    this.currentCameraKey = cameraKey;
-  }
-
   /**
    * Sets up all components of the scene.
    */
   public setup(): void {
     this.setupRenderer(this.canvasManager.canvas, this.renderManager.renderer);
-    this.cameraCollection = this.setupCameras();
-    this.currentCameraKey = this.defaultCamera;
     this.entities = this.setupEntities();
     for (const entity of this.entities) {
       entity.awake();

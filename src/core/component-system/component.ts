@@ -1,3 +1,4 @@
+import {Camera} from 'three';
 import Entity from '../entities/entity';
 import {ManagedLifeCycle} from '../lifecycles/lifecycle';
 import {ComponentClass, IComponentInjector} from './interfaces';
@@ -17,6 +18,10 @@ export default class Component implements ManagedLifeCycle, IComponentInjector {
     if (this.awake) this.awake();
   }
 
+  get managers() {
+    return this.entity.entityScene.managers;
+  }
+
   awake?(): void;
   start?(): void;
   update?(): void;
@@ -33,6 +38,10 @@ export default class Component implements ManagedLifeCycle, IComponentInjector {
 
   removeComponent(componentType: ComponentClass): void {
     this.entity.removeComponent(componentType);
+  }
+
+  setAsMainCamera(camera: Camera): void {
+    this.entity.entityScene.setAsMainCamera(camera);
   }
 
   /**

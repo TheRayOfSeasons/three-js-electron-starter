@@ -13,6 +13,7 @@ import {
 import MonoBehaviour from '../component-system/monobehaviour';
 import {ManagedLifeCycle} from '../lifecycles/lifecycle';
 import EntityScene from '../scenes/entity-scene';
+import {EntityClass} from './interfaces';
 
 /**
  * An entity in the scene.
@@ -41,12 +42,8 @@ export default class Entity extends Object3D implements ManagedLifeCycle, ICompo
     throw new Error('Method not implemented.');
   }
 
-  static instantiate<T extends Entity>(
-      EntityClass: { new(...args: unknown[]): T },
-  ): T {
-    const entity = new EntityClass();
-    // add into entity scene
-    return entity;
+  instantiate(EntityClass: EntityClass): Entity {
+    return this.entityScene.addEntity(EntityClass);
   }
 
   /**
