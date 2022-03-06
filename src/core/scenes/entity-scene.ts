@@ -27,7 +27,6 @@ export default class EntityScene extends Scene implements IEntityScene {
     this.canvasManager = canvasManager;
     this.renderManager = renderManager;
     this.sceneManager = sceneManager;
-    this.entities = this.setupEntities();
     if (this.initialize) {
       this.initialize();
     }
